@@ -2,6 +2,7 @@ import pygame
 from pygame.locals import *
 import numpy as np
 from car import Car
+from maplib import Map
 
 
 def update_game(screen, car, _map, dt):
@@ -27,9 +28,10 @@ def main():
     pygame.display.set_caption('Race Drift')
 
     clock = pygame.time.Clock()
-    _map = []
     
-    car = Car(x = 200, y = 200, width = 7, height = 16, velocity = 5, angle_velocity=0.02, angle = 0)
+    _map = Map()
+    
+    car = Car(x = 200, y = 200, width = 7, height = 16, map = velocity = 5, angle_velocity=0.02, angle = 0)
 
     # main loop
     while True:
