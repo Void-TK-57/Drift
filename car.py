@@ -1,5 +1,6 @@
 import pygame
 import numpy as np 
+from graphics import Scale, Slide, Rotate, transform
 
 
 # car class
@@ -23,38 +24,49 @@ class Car:
 
     # draw the rectangle
     def draw(self, screen):
-        coords =  [ [self.x, self.y], 
-                    [self.x + self.width, self.y], 
-                    [self.x+self.width, self.y+self.height],
-                    [self.x, self.y+self.height] ]
-        # draw the recangle
-        pygame.draw.polygon(screen, self.color,  coords )
+        coords =  [ [self.x - self.width, self.y - self.height], 
+                    [self.x - self.width, self.y + self.height], 
+                    [self.x + self.width, self.y + self.height],
+                    [self.x + self.width, self.y - self.height] ]
+        # rotate
+        coords = np.array(coords)
+        # transformations
+        transformations = [Slide(-self.x, -self.y), Rotate(self.angle*np.pi), Slide(self.x, self.y)]
+        #transformations = [Rotate(self.angle*np.pi), ]
+        # new coords
+        new_coords = transform(transformations, coords.T).T
+        print(new_coords)
+        for i in range(len(new_coords)):
+
+            # draw the recangle
+            pygame.draw.line(screen, self.color,  new_coords[i % len(new_coords)], new_coords[ (i + 1) % len(new_coords)] )
+        #pygame.draw.polygon(screen, self.color,  new_coords )
         # calculate y and x of vertices
-        x = self.width/2 + self.x + np.sin(self.angle*np.pi)*150
-        y = self.height/2 + self.y - np.cos(self.angle*np.pi)*150
+        x = self.x + np.sin(self.angle*np.pi)*250
+        y = self.y - np.cos(self.angle*np.pi)*250
         # draw orientation
-        pygame.draw.line(screen, (255, 255, 255), [self.x + self.width/2, self.y + self.height/2], [x, y] )
+        pygame.draw.line(screen, (255, 255, 255), [self.x, self.y], [x, y] )
 
     
     # polar to cartesian
     def polar_to_cartesian(self, angle, magnitude):
-        x = magnitude*np.sin(self.angle*np.pi)
-        y = magnitude*np.cos(self.angle*np.pi)
+        x = magnitude*np.sin( angle*np.pi )
+        y = -magnitude*np.cos( angle*np.pi )
         return x, y
 
     def move(self, directions):
         # coefficients of up, right, left and down
-        magnitude = 0 + directions[0] - directions[2]
+        magnitude = 0 - directions[0] + directions[2]
         angle = 0 + directions[1] - directions[3]
         #self.velocity = self.polar_to_cartesian(self.angle + angle*self.fixed_angular_velocity, magnitude*self.fixed_velocity)
-        self.vel = self.polar_to_cartesian(self.angle, magnitude*self.p_vel)
+        self.vel = self.polar_to_cartesian(self.angle+1, magnitude*self.p_vel)
         self.angle_vel = angle*self.p_angle_vel
 
     def rotate(self, anti = False):
         angular_velocity = self.fixed_angular_velocity
         if anti:
             angular_velocity *= -1
-        self.body.velocity = self.polar_to_cartesian(-self.body.angle + angular_velocity, self.fixed_velocity)
+        self.body.velocity = self.polar_to_cartesian(self.body.angle + angular_velocity, self.fixed_velocity)
 
 
     def log(self):
@@ -72,4 +84,5 @@ class Car:
     def update(self):
         self.x += self.vel[0]
         self.y += self.vel[1]
-        self.angle += self.angle_vel % 2.0
+        self.angle += self.angle_vel
+        self.angle %= 2.0

@@ -29,7 +29,7 @@ def main():
     clock = pygame.time.Clock()
     _map = []
     
-    car = Car(x = 200, y = 200, width = 14, height = 32, velocity = 10, angle_velocity=0.01, angle = 0)
+    car = Car(x = 200, y = 200, width = 7, height = 16, velocity = 5, angle_velocity=0.02, angle = 0)
 
     # main loop
     while True:
