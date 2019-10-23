@@ -1,12 +1,12 @@
 import pygame
 import numpy as np 
-from graphics import Scale, Slide, Rotate, transform
+from graphics import *
 
 
 # car class
 class Car:
 
-    def __init__(self, x, y, width, height, velocity, angle_velocity, angle = 0, color = (255, 153, 187)):
+    def __init__(self, x, y, width, height, velocity, angle_velocity, angle = 0, n_visions = 8, length_vision = 200, color = (255, 153, 187)):
         self.angle = angle
 
         self.x = x
@@ -22,30 +22,44 @@ class Car:
 
         self.color = color
 
+        self.n_visions = n_visions
+        self.length_vision = length_vision
+
+        self.visions = self.get_visions(n_visions, length_vision)
+
+
+    def get_visions(self, n, length):
+        visions = []
+        for i in range(n):
+            x = self.x + np.sin( i*(2*np.pi/n) + self.angle*np.pi)*length
+            y = self.y - np.cos( i*(2*np.pi/n) + self.angle*np.pi)*length
+            visions.append (Line( Point(self.x, self.y), Point( x, y) ) )
+        return visions
+        
+
+
     # draw the rectangle
-    def draw(self, screen):
+    def draw(self, screen, enable_visions = True):
+        # normal coordinates
         coords =  [ [self.x - self.width, self.y - self.height], 
                     [self.x - self.width, self.y + self.height], 
                     [self.x + self.width, self.y + self.height],
                     [self.x + self.width, self.y - self.height] ]
-        # rotate
+        # rotate the coordinates by angle
         coords = np.array(coords)
-        # transformations
+        # transformations for the rotations
         transformations = [Slide(-self.x, -self.y), Rotate(self.angle*np.pi), Slide(self.x, self.y)]
-        #transformations = [Rotate(self.angle*np.pi), ]
-        # new coords
+        # new coords rotated on the point x, y
         new_coords = transform(transformations, coords.T).T
-        print(new_coords)
-        for i in range(len(new_coords)):
-
-            # draw the recangle
-            pygame.draw.line(screen, self.color,  new_coords[i % len(new_coords)], new_coords[ (i + 1) % len(new_coords)] )
-        #pygame.draw.polygon(screen, self.color,  new_coords )
-        # calculate y and x of vertices
-        x = self.x + np.sin(self.angle*np.pi)*250
-        y = self.y - np.cos(self.angle*np.pi)*250
-        # draw orientation
-        pygame.draw.line(screen, (255, 255, 255), [self.x, self.y], [x, y] )
+        
+        
+        # Draw Polygon
+        pygame.draw.polygon(screen, self.color,  new_coords )
+        
+        if enable_visions:
+            # draw visions
+            for vision in self.visions:
+                pygame.draw.line(screen, (255, 255, 255), [vision.point1.x, vision.point1.y], [vision.point2.x, vision.point2.y] )
 
     
     # polar to cartesian
@@ -61,6 +75,8 @@ class Car:
         #self.velocity = self.polar_to_cartesian(self.angle + angle*self.fixed_angular_velocity, magnitude*self.fixed_velocity)
         self.vel = self.polar_to_cartesian(self.angle+1, magnitude*self.p_vel)
         self.angle_vel = angle*self.p_angle_vel
+        # update visions
+        self.visions = self.get_visions(self.n_visions, self.length_vision)
 
     def rotate(self, anti = False):
         angular_velocity = self.fixed_angular_velocity
