@@ -4,11 +4,8 @@ import numpy as np
 from car import Car
 
 
-import pymunk
-
-def update_game(screen, space, car, _map, dt):
-    # update worlrd
-    space.step(dt/1000)
+def update_game(screen, car, _map, dt):
+    car.update()
     # reset screen and redraw
     screen.fill((0, 0, 0))
     car.draw(screen)
@@ -32,12 +29,7 @@ def main():
     clock = pygame.time.Clock()
     _map = []
     
-    space = pymunk.Space()
-    space.gravity = 0, 0
-
-    car = Car(x = 200, y = 200, width = 14, height = 32, velocity = 200, angular_velocity = 1.4)
-
-    space.add(car.body, car.shape)
+    car = Car(x = 200, y = 200, width = 14, height = 32, velocity = 10, angle_velocity=0.01, angle = 0)
 
     # main loop
     while True:
@@ -59,23 +51,10 @@ def main():
 
         
         # if there is a key pressed, check which one
-        if key_pressed[0]:
-            car.move()
-        if key_pressed[2]:
-            car.move(backwards=True)
-        if key_pressed[1]:
-            car.rotate()
-        if key_pressed[3]:
-            car.rotate(anti = True)
-
-        # if neither of keys are pressed, stop car
-        if not ( key_pressed[0] or key_pressed[2] ):
-            car.stop()
-        if not ( key_pressed[1] or key_pressed[3] ):
-            car.stop(True)
+        car.move(key_pressed)
     
         # update game and tick clock
-        update_game(screen, space, car, _map, clock.get_time())
+        update_game(screen, car, _map, clock.get_time())
         clock.tick(60)
 
         car.log()
