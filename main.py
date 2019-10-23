@@ -1,4 +1,5 @@
 import pygame
+from pygame.locals import *
 import numpy as np
 from car import Car
 
@@ -8,6 +9,9 @@ import pymunk
 def update_game(screen, space, car, _map, dt):
     # update worlrd
     space.step(dt/1000)
+    #car.body.torque = 4
+    print( car.body.position )
+    print( car.body.angle)
     # reset screen and redraw
     screen.fill((0, 0, 0))
     car.draw(screen)
@@ -36,11 +40,9 @@ def main():
 
     car = Car(x = 200, y = 200, width = 14, height = 32, velocity = 10)
 
-    space.add(car.body)
-    #space.add(car.shape)
-    
-    i = 0
+    space.add(car.body, car.shape)
 
+    
     # main loop
     while alive:
         # for each event
@@ -48,10 +50,15 @@ def main():
             # if event is quit, then set alive to false
             if event.type == pygame.QUIT:
                 alive = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    # add for at the bottom of the car
+                    print("Up")
+                    
+                elif event.key == pygame.K_UP:
+                    print("Down")
 
-        if i < 2:
-            car.body.apply_force_at_local_point( [0, 1], [0, 0] )
-
+    
         # update game and tick clock
         update_game(screen, space, car, _map, clock.get_time())
         clock.tick(60)
