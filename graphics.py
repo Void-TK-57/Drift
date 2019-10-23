@@ -45,16 +45,6 @@ class Point:
     def __sub__(self, other):
         return Line(self.x - other.x, self.y - other.y)
 
-    def __iter__(self):
-        self._end = False
-        return self.x
-
-    def __next__(self):
-        if(self._end):
-            raise StopIteration
-        else:
-            self._end = True
-            return self.y
 
 class Line:
 
@@ -62,7 +52,7 @@ class Line:
         self.point1 = point1
         self.point2 = point2
 
-    def __len__(self):
+    def length(self):
         return ( (self.point1.x - self.point2.x)**2 + (self.point1.y - self.point2.y)**2 )**0.5
 
     def __add__(self, other):
@@ -98,17 +88,6 @@ class Line:
                 return None
         else:
             return Point(x, y)
-
-    def __iter__(self):
-        self._end = False
-        return self.point1
-
-    def __next__(self):
-        if(self._end):
-            raise StopIteration
-        else:
-            self._end = True
-            return self.point2
 
 
 def homogen(matrix):

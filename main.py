@@ -2,11 +2,15 @@ import pygame
 from pygame.locals import *
 import numpy as np
 from car import Car
-from maplib import Map
+from maplib import Map, load_map
 from graphics import *
+import json
+
+import sys
 
 
 def update_game(screen, car, _map, dt, directions):
+    
     # update velocity and angular velocity
     car.move(directions)
     # update car position and box coordinates
@@ -15,18 +19,21 @@ def update_game(screen, car, _map, dt, directions):
     car.colision()
 
     # reset screen and redraw
-    screen.fill((0, 0, 0))
+    screen.fill((65, 65, 65))
     car.draw(screen)
     _map.draw(screen)
     # update display
     pygame.display.update()
 
-def main():
+def main(map_path):
+    # read json
+    with open(map_path) as json_file:
+        data = json.load(json_file)
     # init game
     pygame.init()
 
     # display height and width
-    display_height = 600
+    display_height = 500
     disply_width = 800
     # UP, RIGHT, DOWN, LEFT
     key_pressed = [False, False, False, False]
@@ -37,9 +44,9 @@ def main():
 
     clock = pygame.time.Clock()
     
-    _map = Map( [ Line( Point(870, 40), Point(540, 310) ) ] )
+    _map = load_map(data)
     
-    car = Car(x = 200, y = 200, width = 7, height = 16, _map = _map, velocity = 5, angle_velocity=0.02, angle = 0)
+    car = Car(x = 200, y = 200, width = 3, height = 8, _map = _map, velocity = 5, angle_velocity=0.05, angle = 0)
 
     # main loop
     while True:
@@ -48,6 +55,7 @@ def main():
             # if event is quit, then set alive to false
             if event.type == pygame.QUIT:
                 pygame.quit()
+                quit()
             elif event.type == pygame.KEYDOWN or event.type == pygame.KEYUP:
                 # change state of the key pressed
                 if event.key ==pygame.K_UP:
@@ -64,11 +72,6 @@ def main():
         clock.tick(60)
 
         car.log()
-        
-    
-    # quit
-    pygame.quit()
-    quit()
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1])
