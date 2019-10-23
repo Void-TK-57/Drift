@@ -3,13 +3,21 @@ from pygame.locals import *
 import numpy as np
 from car import Car
 from maplib import Map
+from graphics import *
 
 
-def update_game(screen, car, _map, dt):
+def update_game(screen, car, _map, dt, directions):
+    # update velocity and angular velocity
+    car.move(directions)
+    # update car position and box coordinates
     car.update()
+    # check car vision collisions
+    car.colision()
+
     # reset screen and redraw
     screen.fill((0, 0, 0))
     car.draw(screen)
+    _map.draw(screen)
     # update display
     pygame.display.update()
 
@@ -29,9 +37,9 @@ def main():
 
     clock = pygame.time.Clock()
     
-    _map = Map()
+    _map = Map( [ Line( Point(870, 40), Point(540, 310) ) ] )
     
-    car = Car(x = 200, y = 200, width = 7, height = 16, map = velocity = 5, angle_velocity=0.02, angle = 0)
+    car = Car(x = 200, y = 200, width = 7, height = 16, _map = _map, velocity = 5, angle_velocity=0.02, angle = 0)
 
     # main loop
     while True:
@@ -50,13 +58,9 @@ def main():
                     key_pressed[2] = not key_pressed[2]
                 if event.key ==pygame.K_LEFT:
                     key_pressed[3] = not key_pressed[3]
-
-        
-        # if there is a key pressed, check which one
-        car.move(key_pressed)
     
         # update game and tick clock
-        update_game(screen, car, _map, clock.get_time())
+        update_game(screen, car, _map, clock.get_time(), key_pressed)
         clock.tick(60)
 
         car.log()

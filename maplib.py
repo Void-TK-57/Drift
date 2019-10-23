@@ -3,20 +3,20 @@ from graphics import *
 
 class Map:
 
-    def __init__(self, lines):
+    def __init__(self, lines, color = (255, 255, 255)):
         self.lines = lines
-        self.colisions = []
+        self.color = color
 
-    def draw(self, screen):
+    # method to draw the line of the map
+    def draw(self, screen, collisions = True):
         # for each line
         for line in self.lines:
-            pygame.draw.line(screen, line[1], [line[0].point1.x, line[0].point1.y ] , [line[0].point2.x, line[0].point2.y ] )
+            pygame.draw.line(screen, self.color, [line.point1.x, line.point1.y ] , [line.point2.x, line.point2.y ] )
 
-    def colision(self, car):
-        # check detection for each line of map and vision
-        for line in lines:
-            for vision in car.visions:
-                intersect = intersection(line, vision)
-                if intersect is not None:
-                    self.colisions.apend(intersect)
+    # method to check the collision of a car on the map
+    def collision(self, car):
+        # treat car as 4 lines
+        pass
+
+
         

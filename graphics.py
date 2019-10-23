@@ -71,7 +71,7 @@ class Line:
     def __sub__(self, other):
         return Line(self.point1 - other.point1, self.point2 - other.point2)
 
-    def intersection(self, other):
+    def intersection(self, other, segmenet = True):
         x1 = self.point1.x
         y1 = self.point1.y
         x2 = self.point2.x
@@ -81,7 +81,7 @@ class Line:
         x4 = other.point2.x
         y4 = other.point2.y
 
-        denominator = (x1-x2)(y3-y4) - (y1-y2)(x3-x4)
+        denominator = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4)
 
         # check if the denominator is 0
         if denominator == 0:
@@ -89,8 +89,15 @@ class Line:
 
         x = ( (x1*y2 - y1*x2)*(x3-x4) - (x1-x2)*(x3*y4 - y3*x4) ) / denominator
         y = ( (x1*y2 - y1*x2)*(y3-y4) - (y1-y2)*(x3*y4 - y3*x4) ) / denominator
-
-        return Point(x, y)
+        
+        # check if the collision should be within the segment lines
+        if segmenet:
+            if ( x1 < x < x2 or x2 < x < x1 ) and ( x3 < x < x4 or x4 < x < x3 ) and ( y1 < y < y2 or y2 < y < y1 ) and ( y3 < y < y4 or y4 < y < y3 ):
+                return Point(x, y)
+            else:
+                return None
+        else:
+            return Point(x, y)
 
     def __iter__(self):
         self._end = False

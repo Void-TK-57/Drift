@@ -28,12 +28,14 @@ class Car:
         self.color = color
         self.map = _map
         self.colision_color = (255, 255, 70)
+        self.colisions = []
 
         self.n_visions = n_visions
         self.length_vision = length_vision
 
         self.visions = self.get_visions(n_visions, length_vision)
 
+    # function to get line visions based on the number of visions and length of line
     def get_visions(self, n, length):
         visions = []
         for i in range(n):
@@ -42,7 +44,7 @@ class Car:
             visions.append (Line( Point(self.x, self.y), Point( x, y) ) )
         return visions
         
-    # draw the rectangle
+    # draw the bounding box and visions
     def draw(self, screen, enable_visions = True):
         # Draw Polygon
         pygame.draw.polygon(screen, self.color, self.coords )
@@ -51,6 +53,9 @@ class Car:
             # draw visions
             for vision in self.visions:
                 pygame.draw.line(screen, (255, 255, 255), [vision.point1.x, vision.point1.y], [vision.point2.x, vision.point2.y] )
+            # for each collisions
+            for collision in self.colisions:
+                pygame.draw.circle(screen, (255, 0, 0), [int(collision.x), int(collision.y)], 5)
     
     # polar to cartesian
     def polar_to_cartesian(self, angle, magnitude):
@@ -58,6 +63,7 @@ class Car:
         y = -magnitude*np.cos( angle*np.pi )
         return x, y
 
+    # function to set car velocity and angular velocity based on the directions
     def move(self, directions):
         magnitude = 0 - directions[0] + directions[2]
         angle = 0 + directions[1] - directions[3]
@@ -65,6 +71,7 @@ class Car:
         self.vel = self.polar_to_cartesian(self.angle+1, magnitude*self.p_vel)
         self.angle_vel = angle*self.p_angle_vel
 
+    # log values of the color
     def log(self):
         print("Position:")
         print(self.x, self.y)
@@ -76,19 +83,17 @@ class Car:
         print(self.angle_vel)
         print("="*20)
 
-    # update velocity
+    # update position, angle, and bounding box coordinates and visions coordinates
     def update(self):
         self.x += self.vel[0]
         self.y += self.vel[1]
         self.angle += self.angle_vel
         self.angle %= 2.0
         # update car box coordinates
-        # normal coordinates
         coords =  [ [self.x - self.width, self.y - self.height], 
                     [self.x - self.width, self.y + self.height], 
                     [self.x + self.width, self.y + self.height],
                     [self.x + self.width, self.y - self.height] ]
-        # rotate the coordinates by angle
         coords = np.array(coords)
         # transformations for the rotations
         transformations = [Slide(-self.x, -self.y), Rotate(self.angle*np.pi), Slide(self.x, self.y)]
@@ -98,8 +103,14 @@ class Car:
         # update visions
         self.visions = self.get_visions(self.n_visions, self.length_vision)
         
-
-    def collision(self):
-        # treat car as 4 lines between the vertices
-        pass
+    # check collision of visions and add points of the collisions to a list
+    def colision(self):
+        # empty collision
+        self.colisions = []
+        # check detection for each line of map and vision
+        for line in self.map.lines:
+            for vision in self.visions:
+                intersect = line.intersection(vision)
+                if intersect is not None:
+                    self.colisions.append(intersect)
         
