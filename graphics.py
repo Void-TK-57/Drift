@@ -81,8 +81,14 @@ class Line:
         x4 = other.point2.x
         y4 = other.point2.y
 
-        x = ( (x1*y2 - y1*x2)*(x3-x4) - (x1-x2)*(x3*y4 - y3*x4) ) / (x1-x2)(y3-y4) - (y1-y2)(x3-x4)
-        y = ( (x1*y2 - y1*x2)*(y3-y4) - (y1-y2)*(x3*y4 - y3*x4) ) / (x1-x2)(y3-y4) - (y1-y2)(x3-x4)
+        denominator = (x1-x2)(y3-y4) - (y1-y2)(x3-x4)
+
+        # check if the denominator is 0
+        if denominator == 0:
+            return None
+
+        x = ( (x1*y2 - y1*x2)*(x3-x4) - (x1-x2)*(x3*y4 - y3*x4) ) / denominator
+        y = ( (x1*y2 - y1*x2)*(y3-y4) - (y1-y2)*(x3*y4 - y3*x4) ) / denominator
 
         return Point(x, y)
 
