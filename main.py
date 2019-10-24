@@ -11,10 +11,8 @@ import sys
 
 def update_game(screen, car, _map, dt, directions):
     
-    # update velocity and angular velocity
-    car.move(directions)
     # update car position and box coordinates
-    car.update()
+    car.update(directions, dt)
     # check car vision collisions
     car.colision()
 
@@ -68,8 +66,8 @@ def main(map_path):
                     key_pressed[3] = not key_pressed[3]
     
         # update game and tick clock
-        update_game(screen, car, _map, clock.get_time(), key_pressed)
-        clock.tick(60)
+        update_game(screen, car, _map, clock.get_time()/1000.0, key_pressed)
+        clock.tick(30)
 
         car.log()
 
