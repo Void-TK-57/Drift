@@ -133,4 +133,8 @@ class Car:
             except Exception as err:
                 pass
 
+
+def load_car(data, _map):
+    return Car(x = data["car"]["x"], y = data["car"]["y"], width = data["car"]["width"], height = data["car"]["height"], _map = _map, velocity = data["car"]["velocity"], angle_velocity=data["car"]["angle_velocity"], angle = data["car"]["angle"])
+
         

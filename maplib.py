@@ -35,6 +35,8 @@ def load_map(data, color = (255, 255, 255)):
     lines = []
     # for each creates points
     for side in data.keys():
+        if side == "car":
+            continue
         points[side] = []
         # for each line
         for point in data[side]:
@@ -42,6 +44,8 @@ def load_map(data, color = (255, 255, 255)):
 
     # for each point, create lines
     for side in points.keys():
+        if side == "car":
+            continue
         size = len( data[side] )
         # for each line
         for point_index in range( size ):

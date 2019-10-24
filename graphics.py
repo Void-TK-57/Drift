@@ -82,7 +82,7 @@ class Line:
         
         # check if the collision should be within the segment lines
         if segmenet:
-            if ( x1 < x < x2 or x2 < x < x1 ) and ( x3 < x < x4 or x4 < x < x3 ) and ( y1 < y < y2 or y2 < y < y1 ) and ( y3 < y < y4 or y4 < y < y3 ):
+            if ( x1 <= x <= x2 or x2 <= x <= x1 ) and ( x3 <= x <= x4 or x4 <= x <= x3 ) and ( y1 <= y <= y2 or y2 <= y <= y1 ) and ( y3 <= y <= y4 or y4 <= y <= y3 ):
                 return Point(x, y)
             else:
                 return None

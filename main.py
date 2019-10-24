@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 import numpy as np
-from car import Car
+from car import Car, load_car
 from maplib import Map, load_map
 from graphics import *
 import json
@@ -46,7 +46,7 @@ def main(map_path):
     
     _map = load_map(data)
     
-    car = Car(x = 200, y = 200, width = 3, height = 8, _map = _map, velocity = 5, angle_velocity=0.05, angle = 0)
+    car = load_car(data, _map)
 
     # main loop
     while True:

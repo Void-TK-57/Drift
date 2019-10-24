@@ -1,4 +1,14 @@
-{
+{   
+    "car": {
+       "x": 100,
+       "y": 100,
+       "width": 3,
+       "height": 8,
+       "angle": 0,
+       "velocity": 5,
+       "angle_velocity": 0.05
+    },
+    
     "poly1": [ 
         [124,400],
         [42,253],
